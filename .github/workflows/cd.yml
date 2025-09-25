@@ -32,8 +32,8 @@ jobs:
 
       - name: Deploy Helm chart
         run: |
-          # Use local Helm chart directory
-          helm upgrade --install nodejs-app ./helm/nodejs-app \
-            -f ./helm/nodejs-app/values.yaml \
+          # Use local Helm chart files at repo root
+          helm upgrade --install nodejs-app . \
+            -f values.yaml \
             --namespace default \
             --create-namespace
