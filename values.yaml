@@ -1,6 +1,6 @@
 replicaCount: 2
 image:
-  repository: your-dockerhub-username/nodejs-app
+  repository: sushmita04/nodejs-app
   tag: latest
   pullPolicy: IfNotPresent
 service:
