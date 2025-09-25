@@ -31,4 +31,9 @@ jobs:
         run: kubectl get nodes
 
       - name: Deploy Helm chart
-        run: helm upgrade --install nodejs-app helm/nodejs-app --values helm/nodejs-app/values.yaml
+        run: |
+          # Use local Helm chart directory
+          helm upgrade --install nodejs-app ./helm/nodejs-app \
+            -f ./helm/nodejs-app/values.yaml \
+            --namespace default \
+            --create-namespace
