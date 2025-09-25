@@ -23,8 +23,12 @@ jobs:
 
       - name: Configure Kubeconfig
         run: |
-          echo "${{ secrets.KUBECONFIG_DATA }}" > kubeconfig
-          export KUBECONFIG=kubeconfig
+          mkdir -p $HOME/.kube
+          echo "${{ secrets.KUBECONFIG_DATA }}" | base64 -d > $HOME/.kube/config
+          chmod 600 $HOME/.kube/config
+
+      - name: Verify cluster access
+        run: kubectl get nodes
 
       - name: Deploy Helm chart
         run: helm upgrade --install nodejs-app helm/nodejs-app --values helm/nodejs-app/values.yaml
