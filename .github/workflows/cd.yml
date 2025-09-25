@@ -6,7 +6,7 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted   
 
     steps:
       - name: Checkout code
@@ -22,17 +22,9 @@ jobs:
         with:
           version: 'v3.12.0'
 
-      - name: Configure Kubeconfig
-        run: |
-          mkdir -p $HOME/.kube
-          echo "${{ secrets.KUBECONFIG_DATA }}" | base64 -d > $HOME/.kube/config
-          chmod 600 $HOME/.kube/config
-
-      - name: Verify cluster access
-        run: kubectl get nodes -o wide
-
       - name: Deploy Helm chart
         run: |
+          kubectl get nodes -o wide   # sanity check
           helm upgrade --install nodejs-app . \
             -f values.yaml \
             --namespace default \
