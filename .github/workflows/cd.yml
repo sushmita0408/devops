@@ -6,7 +6,8 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest  
+    runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -28,11 +29,16 @@ jobs:
           chmod 600 $HOME/.kube/config
 
       - name: Verify cluster access
-        run: kubectl get nodes
+        run: |
+          echo "Current context:"
+          kubectl config current-context
+          echo "Cluster info:"
+          kubectl cluster-info
+          echo "Nodes in the cluster:"
+          kubectl get nodes -o wide
 
       - name: Deploy Helm chart
         run: |
-          # Use local Helm chart files at repo root
           helm upgrade --install nodejs-app . \
             -f values.yaml \
             --namespace default \
