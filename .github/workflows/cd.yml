@@ -3,10 +3,12 @@ name: CD Pipeline
 on:
   push:
     branches: [ main ]
+    paths:
+      - 'node-app/**'
 
 jobs:
   deploy:
-    runs-on: self-hosted   
+    runs-on: self-hosted
 
     steps:
       - name: Checkout code
@@ -24,8 +26,18 @@ jobs:
 
       - name: Deploy Helm chart
         run: |
-          kubectl get nodes -o wide   # sanity check
-          helm upgrade --install nodejs-app . \
-            -f values.yaml \
+          echo "Checking cluster nodes..."
+          kubectl get nodes -o wide
+
+          echo "Deploying Node.js Helm chart..."
+          helm upgrade --install nodejs-app ./node-app \
+            -f ./node-app/values.yaml \
             --namespace default \
-            --create-namespace
+            --create-namespace \
+            --force
+
+      - name: Verify Deployment
+        run: |
+          echo "Checking pods in default namespace..."
+          kubectl get pods -n default
+          kubectl rollout status deployment nodejs-app -n default
