@@ -44,7 +44,6 @@ jobs:
           echo "Waiting for deployment to exist..."
           until kubectl get deployment nodejs-app-node-app -n default >/dev/null 2>&1; do
             echo "Waiting 5s..."
-            sleep 5
           done
 
       # 6️⃣ Verify deployment and pods
