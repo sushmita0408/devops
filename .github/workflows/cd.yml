@@ -3,25 +3,29 @@ name: CD Pipeline
 on:
   push:
     branches: [ main ]
-    
+
 jobs:
   deploy:
     runs-on: self-hosted
 
     steps:
+      # 1️⃣ Checkout code
       - name: Checkout code
         uses: actions/checkout@v3
 
+      # 2️⃣ Set up kubectl
       - name: Set up kubectl
         uses: azure/setup-kubectl@v3
         with:
           version: 'v1.30.0'
 
+      # 3️⃣ Set up Helm
       - name: Set up Helm
         uses: azure/setup-helm@v3
         with:
           version: 'v3.12.0'
 
+      # 4️⃣ Deploy Helm chart
       - name: Deploy Helm chart
         run: |
           echo "Checking cluster nodes..."
@@ -34,8 +38,19 @@ jobs:
             --create-namespace \
             --force
 
-      - name: Verify pods
+      # 5️⃣ Wait until deployment exists
+      - name: Wait for deployment
         run: |
+          echo "Waiting for deployment to exist..."
+          until kubectl get deployment nodejs-app-node-app -n default >/dev/null 2>&1; do
+            echo "Waiting 5s..."
+            sleep 5
+          done
+
+      # 6️⃣ Verify deployment and pods
+      - name: Verify Deployment
+        run: |
+          echo "Deployment exists. Checking rollout status..."
+          kubectl rollout status deployment nodejs-app-node-app -n default
           echo "Listing pods in default namespace..."
           kubectl get pods -n default
-          kubectl rollout status deployment nodejs-app-node-app -n default
