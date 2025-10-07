@@ -3,9 +3,7 @@ name: CD Pipeline
 on:
   push:
     branches: [ main ]
-    paths:
-      - '**.yaml'  # triggers whenever any YAML in the repo changes (Chart.yaml, values.yaml, deployment.yaml, etc.)
-
+    
 jobs:
   deploy:
     runs-on: self-hosted
