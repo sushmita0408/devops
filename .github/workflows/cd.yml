@@ -4,7 +4,7 @@ on:
   push:
     branches: [ main ]
     paths:
-      - 'devops/**'
+      - '**.yaml'  # triggers whenever any YAML in the repo changes (Chart.yaml, values.yaml, deployment.yaml, etc.)
 
 jobs:
   deploy:
@@ -29,16 +29,15 @@ jobs:
           echo "Checking cluster nodes..."
           kubectl get nodes -o wide
 
-          echo "Deploying Node.js Helm chart..."
-          helm upgrade --install nodejs-app ./node-app \
-            -f ./node-app/values.yaml \
+          echo "Deploying Helm chart..."
+          helm upgrade --install nodejs-app . \
+            -f values.yaml \
             --namespace default \
             --create-namespace \
             --force
 
-      - name: Verify Deployment
+      - name: Verify pods
         run: |
-          echo "Checking pods in default namespace..."
+          echo "Listing pods in default namespace..."
           kubectl get pods -n default
-          kubectl rollout status deployment nodejs-app -n default
-          
+          kubectl rollout status deployment nodejs-app-node-app -n default
