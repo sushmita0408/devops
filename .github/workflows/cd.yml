@@ -28,11 +28,10 @@ jobs:
       # 4️⃣ Deploy Helm chart
       - name: Deploy Helm chart
         env:
-          IMAGE: your-dockerhub-username/nodejs-app:latest   # or change to specific tag
+          IMAGE: sushmita04/node-app:latest   # update to your real Docker image
         run: |
           echo "Deploying Helm chart with image: $IMAGE"
-
-          helm upgrade --install nodejs-app . \
+          helm upgrade --install node-release . \
             --namespace default \
             --create-namespace \
             --set image.repository=$(echo $IMAGE | cut -d: -f1) \
@@ -43,5 +42,6 @@ jobs:
       # 5️⃣ Verify Deployment
       - name: Verify Deployment
         run: |
-          kubectl rollout status deployment nodejs-app-node-app -n default
+          kubectl rollout restart deployment node-release-node-app -n default
+          kubectl rollout status deployment node-release-node-app -n default
           kubectl get pods -n default
