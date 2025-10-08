@@ -17,18 +17,18 @@ spec:
       containers:
         - name: nodejs
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
-            - containerPort: 3000
+            - containerPort: {{ .Values.service.port }}
           livenessProbe:
             httpGet:
               path: /
-              port: 3000
+              port: {{ .Values.service.port }}
             initialDelaySeconds: 10
             periodSeconds: 15
           readinessProbe:
             httpGet:
               path: /
-              port: 3000
+              port: {{ .Values.service.port }}
             initialDelaySeconds: 5
             periodSeconds: 10
-
