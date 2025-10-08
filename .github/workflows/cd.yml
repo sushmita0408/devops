@@ -45,3 +45,4 @@ jobs:
           kubectl rollout restart deployment node-release-node-app -n default
           kubectl rollout status deployment node-release-node-app -n default
           kubectl get pods -n default
+          
