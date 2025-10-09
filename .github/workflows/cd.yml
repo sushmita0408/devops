@@ -13,14 +13,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 2️⃣ Set up kubectl (no Azure)
+      # 2️⃣ Set up kubectl
       - name: Set up kubectl
         run: |
           curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
           chmod +x kubectl
           sudo mv kubectl /usr/local/bin/
 
-      # 3️⃣ Set up Helm (no Azure)
+      # 3️⃣ Set up Helm
       - name: Set up Helm
         run: |
           curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
@@ -32,12 +32,13 @@ jobs:
         run: |
           echo "🚀 Deploying Helm chart with image: $IMAGE"
 
-          helm upgrade --install node-release ./devops \
+          # Use absolute path to your devops repo (chart location)
+          helm upgrade --install node-release /home/optit/devops \
             --namespace default \
             --create-namespace \
             --set image.repository=$(echo $IMAGE | cut -d: -f1) \
             --set image.tag=$(echo $IMAGE | cut -d: -f2) \
-            -f ./devops/values.yaml \
+            -f /home/optit/devops/values.yaml \
             --force
 
           echo "✅ Helm release 'node-release' deployed successfully."
