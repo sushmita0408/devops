@@ -30,7 +30,7 @@ jobs:
         env:
           IMAGE: sushmita04/nodejs-app:latest
         run: |
-          echo "🚀 Deploying Helm chart with image: $IMAGE"
+          echo " Deploying Helm chart with image: $IMAGE"
 
           # Use absolute path to your devops repo (chart location)
           helm upgrade --install node-release /home/optit/devops \
@@ -41,18 +41,18 @@ jobs:
             -f /home/optit/devops/values.yaml \
             --force
 
-          echo "✅ Helm release 'node-release' deployed successfully."
+          echo " Helm release 'node-release' deployed successfully."
 
       # 5️⃣ Verify Deployment
       - name: Verify Deployment
         run: |
           DEPLOYMENT_NAME="node-release-nodejs"
 
-          echo "🔄 Restarting deployment: $DEPLOYMENT_NAME"
+          echo " Restarting deployment: $DEPLOYMENT_NAME"
           kubectl rollout restart deployment $DEPLOYMENT_NAME -n default
 
-          echo "⏳ Waiting for rollout to complete..."
+          echo " Waiting for rollout to complete..."
           kubectl rollout status deployment $DEPLOYMENT_NAME -n default
 
-          echo "📋 Listing current pods:"
+          echo " Listing current pods:"
           kubectl get pods -n default
