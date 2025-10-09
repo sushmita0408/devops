@@ -13,45 +13,45 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 2️⃣ Set up kubectl
+      # 2️⃣ Set up kubectl (no Azure)
       - name: Set up kubectl
-        uses: azure/setup-kubectl@v3
-        with:
-          version: 'v1.30.0'
+        run: |
+          curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+          chmod +x kubectl
+          sudo mv kubectl /usr/local/bin/
 
-      # 3️⃣ Set up Helm
+      # 3️⃣ Set up Helm (no Azure)
       - name: Set up Helm
-        uses: azure/setup-helm@v3
-        with:
-          version: 'v3.12.0'
+        run: |
+          curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
 
       # 4️⃣ Deploy Helm chart
       - name: Deploy Helm chart
         env:
-          IMAGE: sushmita04/node-app:latest   # update to your actual image
+          IMAGE: sushmita04/nodejs-app:latest
         run: |
           echo "🚀 Deploying Helm chart with image: $IMAGE"
-          
-          helm upgrade --install node-release . \
+
+          helm upgrade --install node-release ./devops \
             --namespace default \
             --create-namespace \
             --set image.repository=$(echo $IMAGE | cut -d: -f1) \
             --set image.tag=$(echo $IMAGE | cut -d: -f2) \
-            -f values.yaml \
+            -f ./devops/values.yaml \
             --force
-          
+
           echo "✅ Helm release 'node-release' deployed successfully."
 
       # 5️⃣ Verify Deployment
       - name: Verify Deployment
         run: |
-          DEPLOYMENT_NAME="node-release-nodejs-app"
-          
+          DEPLOYMENT_NAME="node-release-nodejs"
+
           echo "🔄 Restarting deployment: $DEPLOYMENT_NAME"
           kubectl rollout restart deployment $DEPLOYMENT_NAME -n default
-          
+
           echo "⏳ Waiting for rollout to complete..."
           kubectl rollout status deployment $DEPLOYMENT_NAME -n default
-          
+
           echo "📋 Listing current pods:"
           kubectl get pods -n default
