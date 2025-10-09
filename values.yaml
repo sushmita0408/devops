@@ -1,9 +1,12 @@
 replicaCount: 1
+
 image:
   repository: sushmita04/nodejs-app
   tag: latest
   pullPolicy: IfNotPresent
+
 service:
-  type: ClusterIP
-  port: 3000 
-  
+  type: NodePort     # Change from ClusterIP to NodePort
+  port: 3000         # Service port
+  nodePort: 32000    # External port on node (pick any free port)
+
