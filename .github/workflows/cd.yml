@@ -9,23 +9,23 @@ jobs:
     runs-on: self-hosted
 
     steps:
-      # 1️⃣ Checkout code
+      # 1️ Checkout code
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 2️⃣ Set up kubectl
+      # 2️ Set up kubectl
       - name: Set up kubectl
         run: |
           curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
           chmod +x kubectl
           sudo mv kubectl /usr/local/bin/
 
-      # 3️⃣ Set up Helm
+      # 3️ Set up Helm
       - name: Set up Helm
         run: |
           curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
 
-      # 4️⃣ Deploy Helm chart
+      # 4️ Deploy Helm chart
       - name: Deploy Helm chart
         env:
           IMAGE: sushmita04/nodejs-app:latest
@@ -43,7 +43,7 @@ jobs:
 
           echo " Helm release 'node-release' deployed successfully."
 
-      # 5️⃣ Verify Deployment
+      # 5️ Verify Deployment
       - name: Verify Deployment
         run: |
           DEPLOYMENT_NAME="node-release-nodejs"
