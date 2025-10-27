@@ -3,10 +3,13 @@ replicaCount: 1
 image:
   repository: sushmita04/nodejs-app
   tag: latest
-  pullPolicy: Always
+  imagePullPolicy: IfNotPresent
+
+imagePullSecrets:
+  - name: regcred
 
 service:
-  type: NodePort     # Change from ClusterIP to NodePort
-  port: 3000         # Service port
-  nodePort: 32000    # External port on node (pick any free port)
-  
+  type: NodePort
+  port: 3000
+  nodePort: 32000
+
