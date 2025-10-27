@@ -13,16 +13,29 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 2️ Set up kubectl
+      # 2️ Set up kubectl - MODIFIED TO REMOVE SUDO AND USE $HOME/bin
       - name: Set up kubectl
         run: |
+          # Create $HOME/bin directory if it doesn't exist
+          mkdir -p $HOME/bin
+          
+          # Download kubectl
           curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+          
+          # Make executable and move to user's bin path (no sudo required)
           chmod +x kubectl
-          sudo mv kubectl /usr/local/bin/
+          mv kubectl $HOME/bin/
+          
+          # Add the user's bin path to the system PATH for this job
+          echo "$HOME/bin" >> $GITHUB_PATH
+          
+          # Verification (Optional)
+          echo "kubectl installed to: $(which kubectl)"
 
-      # 3️ Set up Helm
+      # 3️ Set up Helm - NO CHANGE NEEDED
       - name: Set up Helm
         run: |
+          # The Helm script installs to $HOME/.local/bin, which is typically on the PATH
           curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
 
       # 4️ Deploy Helm chart
@@ -43,7 +56,7 @@ jobs:
 
           echo " Helm release 'node-release' deployed successfully."
 
-      # 5️ Verify Deployment
+      # 5️ Verify Deployment - NO CHANGE NEEDED
       - name: Verify Deployment
         run: |
           DEPLOYMENT_NAME="node-release-nodejs"
